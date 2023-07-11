@@ -25,7 +25,7 @@ app.use(express.json());
 
 // routes
 app.get('/', (req, res) => {
-    res.send('Hello World! a mi API');
+    res.send('API successfully connected');
 });
 app.use('/api', routes);
 app.use('/login', login);
