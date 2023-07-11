@@ -68,7 +68,7 @@ login.post('/register', (req, res) => {
         conn.query('INSERT INTO users SET ?', [accountData], (err, rows) => {
             if (err) return res.send(err)
 
-            res.json('rows inserted');
+            res.json('Usuario registrado exitosamente');
         });
     });
 });
