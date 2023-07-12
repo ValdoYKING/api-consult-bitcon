@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const myconn = require('express-myconnection');
+const cors = require('cors');
 
 const routes = require('./routes');
 const login = require('./login');
@@ -22,6 +23,12 @@ const dboptions = {
 //middlewares
 app.use(myconn(mysql, dboptions, 'single'));
 app.use(express.json());
+app.use(cors());
+
+// Configuración CORS
+app.use(cors({
+    origin: 'https://unrivaled-smakager-8d710f.netlify.app/'
+}));
 
 // routes
 app.get('/', (req, res) => {
