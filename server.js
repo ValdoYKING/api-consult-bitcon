@@ -27,7 +27,7 @@ app.use(cors());
 
 // Configuración CORS
 app.use(cors({
-    origin: 'https://unrivaled-smakager-8d710f.netlify.app/'
+    origin: 'https://unrivaled-smakager-8d710f.netlify.app'
 }));
 
 // routes
