@@ -85,4 +85,50 @@ login.post('/register', (req, res) => {
     });
 });
 
+login.put('/updatePass/:id', (req, res) => {
+    const { id } = req.params;
+    const { contrasenaAntigua, contrasenaNueva } = req.body;
+
+    // Validar que la antigua contraseña y la nueva contraseña estén presentes
+    if (!contrasenaAntigua || !contrasenaNueva) {
+        return res.status(400).json({ message: 'Por favor, ingresa la antigua contraseña y la nueva contraseña' });
+    }
+
+    // Obtener los datos del usuario desde la base de datos
+    req.getConnection((err, conn) => {
+        if (err) return res.send(err);
+
+        conn.query('SELECT * FROM users WHERE id = ?', [id], (err, rows) => {
+            if (err) return res.send(err);
+
+            // Verificar si el usuario existe en la base de datos
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+
+            const user = rows[0];
+
+            // Verificar la antigua contraseña
+            bcrypt.compare(contrasenaAntigua, user.password, (err, result) => {
+                if (err) return res.send(err);
+
+                if (!result) {
+                    return res.status(401).json({ message: 'La antigua contraseña no coincide' });
+                }
+
+                // Generar el hash de la nueva contraseña
+                const hashedcontrasenaNueva = bcrypt.hashSync(contrasenaNueva, 10);
+
+                // Actualizar la contraseña en la base de datos
+                conn.query('UPDATE users SET password = ? WHERE id = ?', [hashedcontrasenaNueva, id], (err, rows) => {
+                    if (err) return res.send(err);
+
+                    res.json('Contraseña actualizada exitosamente');
+                });
+            });
+        });
+    });
+});
+
+
 module.exports = login;
