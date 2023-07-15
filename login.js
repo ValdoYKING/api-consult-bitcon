@@ -30,7 +30,8 @@ login.post('/', (req, res) => {
                 if (err) return res.send(err);
 
                 if (result) {
-                    return res.json({ message: 'Inicio de sesión exitoso' });
+                    // Devolver el nombre del usuario logueado
+                    return res.json({ nombre: user.nombre, apellidos: user.apellidos });
                 } else {
                     return res.status(401).json({ message: 'Email o contraseña incorrectos' });
                 }
@@ -40,11 +41,12 @@ login.post('/', (req, res) => {
 });
 
 
+
 // Ruta para registrar una nueva cuenta
 login.post('/register', (req, res) => {
     const { nombre, apellidos, fecha_nacimiento, email, password } = req.body;
 
-    // Validar que los campos obligatorios estén presentes
+    // Validar que todos los campos obligatorios estén presentes
     if (!nombre || !apellidos || !fecha_nacimiento || !email || !password) {
         return res.status(400).json({ message: 'Por favor, completa todos los campos obligatorios' });
     }
@@ -52,26 +54,35 @@ login.post('/register', (req, res) => {
     // Generar el hash de la contraseña
     const hashedPassword = bcrypt.hashSync(password, 10);
 
-    // Crear un objeto con los datos de la cuenta
-    const accountData = {
-        nombre,
-        apellidos,
-        fecha_nacimiento,
-        email,
-        password: hashedPassword // Guardar la contraseña hasheada en la base de datos
-    };
-
-    // Guardar los datos de la cuenta en la base de datos
+    // Verificar si el correo ya existe en la base de datos
     req.getConnection((err, conn) => {
-        if (err) return res.send(err)
+        if (err) return res.send(err);
 
-        conn.query('INSERT INTO users SET ?', [accountData], (err, rows) => {
-            if (err) return res.send(err)
+        conn.query('SELECT * FROM users WHERE email = ?', [email], (err, rows) => {
+            if (err) return res.send(err);
 
-            res.json('Usuario registrado exitosamente');
+            // Verificar si ya existe un usuario con el mismo correo
+            if (rows.length > 0) {
+                return res.status(409).json({ message: 'El correo electrónico ya está registrado, por favor use otro' });
+            }
+
+            // Crear un objeto con los datos de la cuenta
+            const accountData = {
+                nombre,
+                apellidos,
+                fecha_nacimiento,
+                email,
+                password: hashedPassword // Guardar la contraseña hasheada en la base de datos
+            };
+
+            // Guardar los datos de la cuenta en la base de datos
+            conn.query('INSERT INTO users SET ?', [accountData], (err, rows) => {
+                if (err) return res.send(err);
+
+                res.json('Usuario registrado exitosamente');
+            });
         });
     });
 });
-//Preuba produccion
 
 module.exports = login;
