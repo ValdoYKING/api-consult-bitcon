@@ -31,7 +31,7 @@ login.post('/', (req, res) => {
 
                 if (result) {
                     // Devolver el nombre del usuario logueado
-                    return res.status(200).json({ nombre: user.nombre, apellidos: user.apellidos, pro:true });
+                    return res.status(200).json({ nombre: user.nombre, apellidos: user.apellidos, user:pro });
                 } else {
                     return res.status(401).json({ message: 'Email o contraseña incorrectos' });
                 }
@@ -70,7 +70,8 @@ login.post('/register', (req, res) => {
                 apellidos,
                 fecha_nacimiento,
                 email,
-                password: hashedPassword // Guardar la contraseña hasheada en la base de datos
+                password: hashedPassword, // Guardar la contraseña hasheada en la base de datos
+                pro: false
             };
 
             // Guardar los datos de la cuenta en la base de datos

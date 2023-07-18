@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const routes = require('./routes');
 const login = require('./login');
+const users = require('./users');
 
 const app = express();
 app.set('port', process.env.PORT || 9000);
@@ -37,6 +38,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api', routes);
 app.use('/login', login);
+app.use('/users', users);
 
 //server running
 app.listen(app.get('port'), () => {
