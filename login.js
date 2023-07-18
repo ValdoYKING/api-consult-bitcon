@@ -31,7 +31,7 @@ login.post('/', (req, res) => {
 
                 if (result) {
                     // Devolver el nombre del usuario logueado
-                    return res.json({ nombre: user.nombre, apellidos: user.apellidos });
+                    return res.status(200).json({ nombre: user.nombre, apellidos: user.apellidos, pro:true });
                 } else {
                     return res.status(401).json({ message: 'Email o contraseña incorrectos' });
                 }
@@ -39,8 +39,6 @@ login.post('/', (req, res) => {
         });
     });
 });
-
-
 
 // Ruta para registrar una nueva cuenta
 login.post('/register', (req, res) => {
