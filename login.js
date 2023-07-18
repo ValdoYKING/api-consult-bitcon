@@ -31,7 +31,7 @@ login.post('/', (req, res) => {
 
                 if (result) {
                     // Devolver el nombre del usuario logueado
-                    return res.status(200).json({ nombre: user.nombre, apellidos: user.apellidos, user:pro });
+                    return res.status(200).json({ nombre: user.nombre, apellidos: user.apellidos, pro:user.pro });
                 } else {
                     return res.status(401).json({ message: 'Email o contraseña incorrectos' });
                 }
