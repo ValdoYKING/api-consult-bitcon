@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const routes = require('./routes');
 const login = require('./login');
+const bitUserRouter = require('./bitUser');
 
 
 const app = express();
@@ -38,7 +39,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api', routes);
 app.use('/login', login);
-
+app.use('/bituser', bitUserRouter);
 
 //server running
 app.listen(app.get('port'), () => {
