@@ -78,7 +78,7 @@ login.post('/register', (req, res) => {
             conn.query('INSERT INTO users SET ?', [accountData], (err, rows) => {
                 if (err) return res.send(err);
 
-                res.json('Usuario registrado exitosamente');
+                res.status(200).json('Usuario registrado exitosamente');
             });
         });
     });
@@ -122,7 +122,7 @@ login.put('/updatePass/:id', (req, res) => {
                 conn.query('UPDATE users SET password = ? WHERE id = ?', [hashedcontrasenaNueva, id], (err, rows) => {
                     if (err) return res.send(err);
 
-                    res.json('Contraseña actualizada exitosamente');
+                    res.status(200).json('Contraseña actualizada exitosamente');
                 });
             });
         });

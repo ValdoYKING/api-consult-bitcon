@@ -23,7 +23,7 @@ router.get('/getUserData/:id', (req, res) => {
             }
 
             // Devolver los datos del usuario excluyendo la contraseña
-            res.json(rows[0]);
+            res.status(200).json(rows[0]);
         });
     });
 });
@@ -63,7 +63,7 @@ router.put('/updateUserData/:id', (req, res) => {
             conn.query('UPDATE users SET ? WHERE id = ?', [updateData, userId], (err, result) => {
                 if (err) return res.send(err);
 
-                res.json({ message: 'Datos del usuario actualizados exitosamente' });
+                res.status(200).json({ message: 'Datos del usuario actualizados exitosamente' });
             });
         });
     });
