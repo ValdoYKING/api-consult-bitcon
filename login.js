@@ -1,8 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 const login = express.Router();
 
-// Ruta para el inicio de sesión
+// Clave secreta para la generación del token
+const secretKey = 'ABDCE_example';
+
+/*-----Ruta para el inicio de sesión-----*/
 login.post('/', (req, res) => {
     const { email, password } = req.body;
 
@@ -30,8 +35,13 @@ login.post('/', (req, res) => {
                 if (err) return res.send(err);
 
                 if (result) {
-                    // Devolver el nombre del usuario logueado
-                    return res.status(200).json({ nombre: user.nombre, apellidos: user.apellidos, pro:user.pro });
+                    // Generar el token para el usuario
+                    const token = jwt.sign({ id: user.id, nombre: user.nombre, pro: user.pro }, secretKey, { expiresIn: '1h' });
+
+                    // Devolver el token y los datos del usuario en la respuesta
+                    return res.status(200).json({ token,id:user.id, nombre: user.nombre, apellidos: user.apellidos, pro: user.pro });
+                    // Guardar el token en el LocalStorage
+                    localStorage.setItem('token', respuesta.token);
                 } else {
                     return res.status(401).json({ message: 'Email o contraseña incorrectos' });
                 }
