@@ -28,6 +28,32 @@ router.get('/getUserData/:id', (req, res) => {
     });
 });
 
+/* Obetener datos del usuario mediante post: email */
+router.post('/getUserbyEmail', (req, res) => {
+    const { email } = req.body;
+
+    // Validar que se proporcionó el correo electrónico
+    if (!email) {
+        return res.status(400).json({ message: 'Por favor, ingresa el correo electrónico del usuario' });
+    }
+
+    req.getConnection((err, conn) => {
+        if (err) return res.send(err);
+
+        // Realizar una consulta a la base de datos para obtener los datos del usuario por su correo electrónico
+        conn.query('SELECT id, nombre, apellidos, fecha_nacimiento, email, pro FROM users WHERE email = ?', [email], (err, rows) => {
+            if (err) return res.status(500).send(err);
+
+            // Verificar si se encontró un usuario con el correo electrónico proporcionado
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+
+            // Devolver los datos del usuario excluyendo la contraseña
+            res.status(200).json(rows[0]);
+        });
+    });
+});
 
 // Ruta para actualizar los datos de un usuario por su ID
 router.put('/updateUserData/:id', (req, res) => {
