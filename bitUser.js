@@ -29,7 +29,7 @@ router.get('/getUserData/:id', (req, res) => {
 });
 
 /* Obetener datos del usuario mediante post: email */
-router.post('/getUserbyEmail', (req, res) => {
+router.post('/getUserEmail', (req, res) => {
     const { email } = req.body;
 
     // Validar que se proporcionó el correo electrónico
