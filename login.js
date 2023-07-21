@@ -39,7 +39,7 @@ login.post('/', (req, res) => {
                     const token = jwt.sign({ id: user.id, nombre: user.nombre, pro: user.pro }, secretKey, { expiresIn: '1h' });
 
                     // Devolver el token y los datos del usuario en la respuesta
-                    return res.status(200).json({ token,id:user.id, nombre: user.nombre, apellidos: user.apellidos, pro: user.pro });
+                    return res.status(200).json({ token, id: user.id, nombre: user.nombre, apellidos: user.apellidos, pro: user.pro });
                     // Guardar el token en el LocalStorage
                     localStorage.setItem('token', respuesta.token);
                 } else {

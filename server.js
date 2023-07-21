@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const routes = require('./routes');
 const login = require('./login');
 const bitUserRouter = require('./bitUser');
+const bitProRouter = require('./bitPro');
 
 
 const app = express();
@@ -48,7 +49,7 @@ function verificarToken(req, res, next) {
 // Configuración CORS
 app.use(cors({
     // origin: 'https://unrivaled-smakager-8d710f.netlify.app'
-    origin: ['*','https://unrivaled-smakager-8d710f.netlify.app']
+    origin: ['*', 'https://unrivaled-smakager-8d710f.netlify.app']
 }));
 
 // routes
@@ -59,6 +60,7 @@ app.use('/api', routes);
 app.use('/login', login);
 // app.use('/bituser', verificarToken,  bitUserRouter);
 app.use('/bituser', bitUserRouter);
+app.use('/bitpro', bitProRouter);
 
 //server running
 app.listen(app.get('port'), () => {
