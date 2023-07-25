@@ -72,7 +72,8 @@ routerPro.post('/updateUserProMail', (req, res) => {
     // const { id } = req.params;
 
     // Obtener los campos a actualizar que llegan en la solicitud
-    const { email,tipo_notificacion, tipo_alerta, tipo_moneda, cantidad_diferente } = req.body;
+    //const { email,tipo_notificacion, tipo_alerta, tipo_moneda, cantidad_diferente,monedasFavoritas,alertas } = req.body;
+    const { email,alertas,frecuencia,monedas,monedasFavoritas,name,tipoAlerta } = req.body;
 
     // Verificar si el usuario existe en la base de datos
     req.getConnection((err, conn) => {
@@ -95,12 +96,14 @@ routerPro.post('/updateUserProMail', (req, res) => {
                 // Si el usuario ya tiene un registro, se actualizan los datos
                 if (rows.length > 0) {
                     const updateData = {};
-
                     // Actualizar solo los campos que llegan en la solicitud
-                    if (tipo_notificacion) updateData.tipo_notificacion = tipo_notificacion;
-                    if (tipo_alerta) updateData.tipo_alerta = tipo_alerta;
-                    if (tipo_moneda) updateData.tipo_moneda = tipo_moneda;
-                    if (cantidad_diferente) updateData.cantidad_diferente = cantidad_diferente;
+                    if (alertas) updateData.alertas = alertas;
+                    if (tipoAlerta) updateData.tipoAlerta = tipoAlerta;
+                    if (name) updateData.name = name;
+                    if (frecuencia) updateData.frecuencia = frecuencia;
+                    if (monedas) updateData.monedas = monedas;
+                    if (monedasFavoritas) updateData.monedasFavoritas = monedasFavoritas;
+                    // if (cantidad_diferente) updateData.cantidad_diferente = cantidad_diferente;
 
                     conn.query('UPDATE user_pro_conf SET ? WHERE id_user = ?', [updateData, user.id], (err, result) => {
                         if (err) return res.status(500).json({ message: 'Error al actualizar la configuración' });
@@ -111,10 +114,12 @@ routerPro.post('/updateUserProMail', (req, res) => {
                     // Si el usuario no tiene un registro, se crea uno nuevo con los campos proporcionados
                     const proConfData = {
                         id_user: user.id,
-                        tipo_notificacion,
-                        tipo_alerta,
-                        tipo_moneda,
-                        cantidad_diferente
+                        alertas,
+                        tipoAlerta,
+                        name,
+                        frecuencia,
+                        monedas,
+                        monedasFavoritas
                     };
 
                     conn.query('INSERT INTO user_pro_conf SET ?', [proConfData], (err, result) => {
