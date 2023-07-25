@@ -133,5 +133,26 @@ routerPro.post('/updateUserProMail', (req, res) => {
     });
 });
 
+routerPro.get('/getUserProData/:id', (req, res) => {
+    const userId = req.params.id;
+
+    // Verificar si el usuario existe en la base de datos
+    req.getConnection((err, conn) => {
+        if (err) return res.status(500).json({ message: 'Error de conexión a la base de datos' });
+
+        conn.query('SELECT * FROM user_pro_conf WHERE id_user = ?', [userId], (err, rows) => {
+            if (err) return res.status(500).json({ message: 'Error al obtener los datos del usuario' });
+
+            // Verificar si se encontró un registro para el usuario con el ID proporcionado
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron datos para el usuario con el ID proporcionado' });
+            }
+
+            // Devolver los datos del usuario
+            res.status(200).json(rows[0]);
+        });
+    });
+});
+
 
 module.exports = routerPro;
