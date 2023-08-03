@@ -1,16 +1,21 @@
 const express = require('express');
+const http = require('http');
 const mysql = require('mysql');
 const myconn = require('express-myconnection');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const socketIO = require('socket.io');
 
 const routes = require('./routes');
 const login = require('./login');
 const bitUserRouter = require('./bitUser');
 const bitProRouter = require('./bitPro');
 
-
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+
+
 app.set('port', process.env.PORT || 9000);
 const dboptions = {
     // host: 'localhost',
@@ -62,7 +67,28 @@ app.use('/login', login);
 app.use('/bituser', bitUserRouter);
 app.use('/bitpro', bitProRouter);
 
+// Escuchar conexiones de clientes
+io.on('connection', (socket) => {
+    console.log('Nuevo cliente conectado');
+
+    // Aquí puedes definir eventos y lógica para manejar la comunicación con los clientes
+    // Por ejemplo:
+    socket.on('mensaje', (data) => {
+        console.log('Mensaje recibido:', data);
+        // Aquí puedes emitir el mensaje a todos los clientes conectados
+        io.emit('mensaje', data);
+    });
+
+    // Otros eventos y lógica aquí...
+});
+
 //server running
-app.listen(app.get('port'), () => {
+/* app.listen(app.get('port'), () => {
     console.log('Express server listening on port ' + app.get('port'));
+}); */
+
+// Iniciar el servidor
+const port = process.env.PORT || 9000;
+server.listen(port, () => {
+    console.log(`Servidor en funcionamiento en el puerto ${port}`);
 });

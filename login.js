@@ -1,6 +1,12 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const CryptoJS = require('crypto-js');
+
+require('dotenv').config();
+const secretKeyAES = process.env.SECRET_KEY;
+
 
 const login = express.Router();
 
@@ -39,7 +45,9 @@ login.post('/', (req, res) => {
                     const token = jwt.sign({ id: user.id, nombre: user.nombre, pro: user.pro }, secretKey, { expiresIn: '1h' });
 
                     // Devolver el token y los datos del usuario en la respuesta
-                    return res.status(200).json({ token, id: user.id, nombre: user.nombre, apellidos: user.apellidos, pro: user.pro });
+                    const decryptedNombre = CryptoJS.AES.decrypt(user.nombre, secretKeyAES).toString(CryptoJS.enc.Utf8);
+                    const decryptedApellidos = CryptoJS.AES.decrypt(user.apellidos, secretKeyAES).toString(CryptoJS.enc.Utf8);
+                    return res.status(200).json({ token, id: user.id, nombre: decryptedNombre, apellidos: decryptedApellidos, pro: user.pro });
                     // Guardar el token en el LocalStorage
                     localStorage.setItem('token', respuesta.token);
                 } else {
@@ -59,14 +67,22 @@ login.post('/register', (req, res) => {
         return res.status(400).json({ message: 'Por favor, completa todos los campos obligatorios' });
     }
 
+    // Encriptar el nombre y apellidos utilizando AES
+    const secretKey = secretKeyAES;
+    const encryptedNombre = CryptoJS.AES.encrypt(nombre, secretKey).toString();
+    const encryptedApellidos = CryptoJS.AES.encrypt(apellidos, secretKey).toString();
+    // const encryptedEmail = CryptoJS.AES.encrypt(email, secretKey).toString();
+
     // Generar el hash de la contraseña
     const hashedPassword = bcrypt.hashSync(password, 10);
+
 
     // Verificar si el correo ya existe en la base de datos
     req.getConnection((err, conn) => {
         if (err) return res.send(err);
 
         conn.query('SELECT * FROM users WHERE email = ?', [email], (err, rows) => {
+            // conn.query('SELECT * FROM users WHERE email = ?', [encryptedEmail], (err, rows) => {
             if (err) return res.send(err);
 
             // Verificar si ya existe un usuario con el mismo correo
@@ -76,10 +92,10 @@ login.post('/register', (req, res) => {
 
             // Crear un objeto con los datos de la cuenta
             const accountData = {
-                nombre,
-                apellidos,
+                nombre: encryptedNombre,
+                apellidos: encryptedApellidos,
                 fecha_nacimiento,
-                email,
+                email: email,
                 password: hashedPassword, // Guardar la contraseña hasheada en la base de datos
                 pro: false
             };
