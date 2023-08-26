@@ -2,7 +2,6 @@
 public function generaNomina($id_nomina)
     {
         /* Cargamos a libreria del cfdi */
-        // require_once 'application/libraries/cfdijuan/SWSDK.php';
         require_once 'application/libraries/cfdi/SWSDK.php';
         header('Content-type: text/plain');
         /* Creamos la carpeta donde se guardara el archivo */
